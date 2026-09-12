@@ -1,0 +1,37 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ユーザーモデル
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  cards        Card[]   // ユーザーが作成したカード（1対多）
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// 言葉カードモデル
+model Card {
+  id             String   @id @default(cuid())
+  quote          String   // 心に残った言葉（100文字制限はZod/フロントで制御）
+  bookTitle      String   // 本のタイトル
+  authorName     String?  // 著者名（任意）
+  
+  // 将来的な拡張用カラム（NULL許容）
+  isbn           String?
+  externalBookId String?
+
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
