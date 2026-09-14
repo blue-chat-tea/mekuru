@@ -1,0 +1,50 @@
+name: CI (Build & Lint Check)
+
+# 実行タイミングの設定
+on:
+  push:
+    branches:
+      - '**'          # すべてのブランチへのコミット（Push）時
+  pull_request:
+    branches:
+      - main          # main への PR 作成・更新時
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. リポジトリのコードを取得
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Node.js 環境のセットアップ
+      - name: Setup Node.js
+        uses: actions/checkout@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      # 3. パッケージのインストール
+      - name: Install dependencies
+        run: npm ci
+
+      # 4. Prisma Client の生成
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
+      # 5. 構文チェック（ESLint）
+      - name: Run Lint
+        run: npm run lint
+
+      # 6. 型チェック（TypeScript）
+      - name: Run Type Check
+        run: npx tsc --noEmit
+
+      # 7. ビルドチェック（TypeScriptエラーや依存関係の破壊を検知）
+      - name: Run Build
+        run: npm run build
+        env:
+          # ビルド時に必要な最低限のダミー環境変数
+          DATABASE_URL: "postgresql://dummy:dummy@localhost:5432/dummy"
+          AUTH_SECRET: "dummy-secret-for-ci-build-check-only-123456789"
