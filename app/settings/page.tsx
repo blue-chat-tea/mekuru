@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react"; // ★ useEffect
+import { useState } from "react"; // ★ useEffect
 import { useRouter } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
@@ -14,13 +14,6 @@ export default function SettingsPage() {
   const [isDeleting, setIsDeleting] = useState(false); // 退会確認画面フラグ
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
-
-  // セッションが更新された際に入力フォームの初期値を同期する
-  useEffect(() => {
-    if (session?.user?.name) {
-      setName(session.user.name);
-    }
-  }, [session?.user?.name]);
 
   // ユーザー情報の更新
   const handleUpdate = async (e: React.FormEvent) => {
@@ -39,8 +32,7 @@ export default function SettingsPage() {
         throw new Error("更新に失敗しました。");
       }
 
-      // DB更新成功後、JWTセッション（Cookie）内のユーザー名も同期更新する
-      console.log("[Client] update() を実行します:", name);
+      // セッションを更新する
       await update({ name });
 
       setMessage("アカウント情報を更新しました。");
