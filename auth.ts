@@ -2,8 +2,10 @@ import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { prisma } from "@/lib/prisma";
 import { verifyPassword } from "@/lib/password";
+import { authConfig } from "./auth.config";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  ...authConfig, // auth.config.ts の設定（secret, pages等）を継承
   providers: [
     Credentials({
       // メールアドレスとパスワードでログインする
@@ -51,18 +53,26 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     signIn: "/login", // カスタムログイン画面のパス
   },
   callbacks: {
+    ...authConfig.callbacks,
     // セッションにユーザーIDを追加で書き込む処理
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
       if (user) {
         // サーバー側で作成される暗号トークン（jwt）に id を書き込む
         token.id = user.id;
+        token.name = user.name;
       }
+
+      // クライアント側で update({ name }) が実行された時に JWT トークン内の name を更新
+      if (trigger === "update" && session?.name) {
+        token.name = session.name;
+      }
+
       return token;
     },
     async session({ session, token }) {
-      if (session.user && token.id) {
-        // ラウザや画面側で取得できるセッション情報（session）に id を受け渡す
-        session.user.id = token.id as string;
+      if (session.user) {
+        if (token.id) session.user.id = token.id as string;
+        if (token.name) session.user.name = token.name as string;
       }
       return session;
     },
