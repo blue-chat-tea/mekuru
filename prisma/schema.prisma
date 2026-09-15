@@ -23,12 +23,12 @@ model Card {
   id             String   @id @default(cuid())
   quote          String   // 心に残った言葉（100文字制限はZod/フロントで制御）
   bookTitle      String   // 本のタイトル
-  authorName     String?  // 著者名（任意）
-  
-  // 将来的な拡張用カラム（NULL許容）
-  isbn           String?
-  externalBookId String?
+  authorName     String?  // 著者名（不詳などのため任意）
+  isbn           String?　// ISBNコード（将来のEC連携用）
+  externalBookId String? // Google Books ID等（API連携用
+  isPublic       Boolean  @default(true) // 公開/非公開フラグ
 
+  // 投稿者のユーザーID（外部キー）
   userId         String
   user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
