@@ -1,10 +1,11 @@
 "use server";
 
-import { auth } from "@/auth"; // ※プロジェクトのAuth.jsのパスに合わせて調整してください
-import { prisma } from "@/lib/prisma"; // ※Prismaクライアントのインポート元に合わせて調整
+import { auth } from "@/auth";
+import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
+// カード作成
 export async function createCard(formData: FormData) {
   // 1. ログイン中のセッションからユーザー情報を取得
   const session = await auth();
@@ -37,7 +38,32 @@ export async function createCard(formData: FormData) {
     },
   });
 
-  // 4. キャッシュを更新してマイノート（あるいはタイムライン）へリダイレクト
-  revalidatePath("/notes");
-  redirect("/notes");
+  // 4. キャッシュを更新してログイン中のユーザーのマイノートへリダイレクト
+  revalidatePath(`/notes/${session.user.id}`);
+  redirect(`/notes/${session.user.id}`);
+}
+
+export async function updateCard(cardId: string, formData: FormData) {
+  const quote = formData.get("quote") as string;
+  const bookTitle = formData.get("bookTitle") as string;
+  const authorName = formData.get("authorName") as string;
+  const isPublic = formData.get("isPublic") === "true";
+
+  if (!quote || !bookTitle) {
+    throw new Error("必須項目が入力されていません。");
+  }
+
+  // データベースのカードを更新
+  await prisma.card.update({
+    where: { id: cardId },
+    data: {
+      quote,
+      bookTitle,
+      authorName: authorName || null,
+      isPublic,
+    },
+  });
+
+  // 更新が終わったらホームやマイノートなどにリダイレクト
+  redirect("/");
 }

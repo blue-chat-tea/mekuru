@@ -62,7 +62,7 @@ export default function HomePage() {
       </main>
 
       {/* 下部ナビゲーションバー（共通化） */}
-      <Navigation activeTab="create" />
+      <Navigation activeTab="home" />
     </div>
   );
 }
