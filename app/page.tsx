@@ -1,67 +1,44 @@
-"use client";
+export const dynamic = "force-dynamic";
 
-import { useSession } from "next-auth/react";
+import { prisma } from "@/lib/prisma";
 import Header from "@/components/Header";
 import Navigation from "@/components/Navigation";
+import ExploreClientContent from "@/components/ExploreClientContent"; // メイン画面用のクライアントコンポーネント
+<Navigation activeTab="home" />;
 
-export default function HomePage() {
-  const { data: session } = useSession();
-
-  // ダミーデータ（Phase 3でDBから取得するように繋ぎ込みます）
-  const sampleCard = {
-    quote:
-      "本を読み、\n抜き書きをすると、\n自分の愛してやまないもの、\n大切に思っている価値が、\nはっきり形をとるようになる。",
-    bookTitle: "百冊で耕す",
-    authorName: "加藤耕太郎",
-    createdAt: "2026/08/30",
-    userName: session?.user?.name || "はるか",
-  };
+export default async function ExplorePage() {
+  // 1. 全ユーザーの公開カードを新しい順（createdAt desc）で取得し、ユーザー情報も結合する
+  const cards = await prisma.card.findMany({
+    where: {
+      isPublic: true, // 公開設定のもののみ
+    },
+    include: {
+      user: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+    },
+    orderBy: {
+      createdAt: "desc", // 登録日時が新しい順
+    },
+  });
 
   return (
     <div className="flex min-h-screen flex-col bg-[#FAF7F2]">
-      {/* 共通ヘッダー（ハンバーガーメニュー含む） */}
+      {/* 共通ヘッダー */}
       <Header />
 
       {/* メインコンテンツエリア */}
-      <main className="flex flex-1 flex-col items-center justify-between px-6 py-6">
-        <h1 className="text-xl font-bold text-gray-800">めぐる言葉</h1>
+      <main className="flex flex-1 flex-col items-center px-6 py-6 pb-24">
+        <h1 className="text-xl font-bold text-gray-800 mb-6">めぐる言葉</h1>
 
-        {/* 言葉カード */}
-        <div className="my-6 w-full max-w-sm rounded-3xl bg-white p-6 shadow-sm flex flex-col justify-between min-h-[360px]">
-          {/* 引用テキスト */}
-          <p className="whitespace-pre-wrap text-base leading-relaxed text-gray-800 font-serif">
-            {sampleCard.quote}
-          </p>
-
-          <div>
-            {/* 本のタイトル・著者 */}
-            <div className="text-right mb-6">
-              <p className="font-semibold text-[#7A2E3B]">
-                {sampleCard.bookTitle}
-              </p>
-              <p className="text-sm text-gray-500">{sampleCard.authorName}</p>
-            </div>
-
-            {/* ユーザー情報・日付 */}
-            <div className="flex items-center justify-between pt-2 border-t border-gray-100">
-              <div className="flex items-center space-x-2">
-                <div className="h-8 w-8 rounded-full bg-stone-300" />
-                <span className="text-sm text-gray-600">
-                  {sampleCard.userName}
-                </span>
-              </div>
-              <span className="text-sm text-gray-400">
-                {sampleCard.createdAt}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* ページネーション（カウント表示） */}
-        <div className="text-sm text-gray-600 mb-4">1/1000</div>
+        {/* カード一覧・スワイプ/ページネーションを管理するクライアントコンポーネント */}
+        <ExploreClientContent cards={cards} />
       </main>
 
-      {/* 下部ナビゲーションバー（共通化） */}
+      {/* 下部ナビゲーションバー（アクティブタブを切り替え） */}
       <Navigation activeTab="home" />
     </div>
   );
