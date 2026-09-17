@@ -29,6 +29,11 @@ export default function NotesClientContent({
   // ★ 1. モーダルの開閉状態を管理するステートを追加
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // ★ 追加：アニメーションの方向（'left' または 'right'）を保持
+  const [slideDirection, setSlideDirection] = useState<"left" | "right">(
+    "right",
+  );
+
   // ★ 2. URLの ?highlight=... を取得し、対応するカードのインデックスを初期値にする
   const searchParams = useSearchParams();
   const highlightId = searchParams.get("highlight");
@@ -55,6 +60,7 @@ export default function NotesClientContent({
   // 前のカードへ
   const handlePrev = () => {
     if (safeIndex > 0) {
+      setSlideDirection("left");
       setCurrentIndex(safeIndex - 1);
     }
   };
@@ -62,6 +68,7 @@ export default function NotesClientContent({
   // 次のカードへ
   const handleNext = () => {
     if (safeIndex < totalCards - 1) {
+      setSlideDirection("right");
       setCurrentIndex(safeIndex + 1);
     }
   };
@@ -93,8 +100,15 @@ export default function NotesClientContent({
 
   return (
     <div className="w-full max-w-sm flex flex-col items-center space-y-4">
-      {/* カード本体 */}
-      <div className="w-full bg-white rounded-3xl p-6 shadow-sm space-y-5 relative">
+      {/* カード本体：keyにsafeIndexを指定することで、切り替わるたびにアニメーションが発火します */}
+      <div
+        key={safeIndex}
+        className={`w-full h-[400px] flex flex-col justify-between bg-white rounded-3xl p-6 shadow-sm relative transition-all duration-500 ease-out transform ${
+          slideDirection === "right"
+            ? "animate-slide-in-right"
+            : "animate-slide-in-left"
+        }`}
+      >
         {/* 公開ステータス */}
         <div className="flex justify-end items-center gap-1.5 text-xs text-[#A3978E]">
           {currentCard.isPublic ? (
@@ -137,14 +151,16 @@ export default function NotesClientContent({
         </div>
 
         {/* 言葉 */}
-        <p className="font-serif text-lg leading-relaxed text-gray-800 whitespace-pre-wrap">
-          {currentCard.quote}
-        </p>
+        <div className="flex-1 flex items-center">
+          <p className="font-serif text-lg leading-relaxed text-gray-800 whitespace-pre-wrap line-clamp-6">
+            {currentCard.quote}
+          </p>
+        </div>
 
         {/* 本のタイトルと著者（右寄せ・左端揃え） */}
-        <div className="flex flex-col items-end">
+        <div className="flex flex-col items-end pb-2">
           <div className="text-right">
-            <h2 className="font-serif text-xs text-[#7A2E3B]">
+            <h2 className="font-serif text-xs font-bold text-[#7A2E3B]">
               {currentCard.bookTitle}
             </h2>
             <p className="font-serif text-xs text-gray-500 mt-0.5">
