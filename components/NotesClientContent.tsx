@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { deleteCard } from "@/app/delete/actions"; // 削除アクション
 import Link from "next/link";
 
@@ -23,11 +24,20 @@ export default function NotesClientContent({
   userName,
 }: NotesClientContentProps) {
   const [cards, setCards] = useState<CardItem[]>(initialCards);
-  const [currentIndex, setCurrentIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
 
   // ★ 1. モーダルの開閉状態を管理するステートを追加
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // ★ 2. URLの ?highlight=... を取得し、対応するカードのインデックスを初期値にする
+  const searchParams = useSearchParams();
+  const highlightId = searchParams.get("highlight");
+
+  const [currentIndex, setCurrentIndex] = useState(() => {
+    if (!highlightId) return 0;
+    const index = initialCards.findIndex((c) => c.id === highlightId);
+    return index !== -1 ? index : 0; // 見つからなければ0番目
+  });
 
   if (cards.length === 0) {
     return (

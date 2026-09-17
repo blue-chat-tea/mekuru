@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import Link from "next/link";
 import Navigation from "@/components/Navigation";
@@ -9,6 +10,7 @@ import { updateCard } from "@/app/update/[id]/actions"; // 更新用のServer Ac
 type EditCardFormProps = {
   card: {
     id: string;
+    userId: string;
     quote: string;
     bookTitle: string;
     authorName: string | null;
@@ -17,10 +19,17 @@ type EditCardFormProps = {
 };
 
 export default function EditCardForm({ card }: EditCardFormProps) {
+  const router = useRouter();
   const [quoteLength, setQuoteLength] = useState(card.quote.length);
 
   // サーバーアクションにカードのIDを紐付ける
   const updateCardWithId = updateCard.bind(null, card.id);
+
+  // キャンセル時の処理（ハイライト付きでマイノートの該当カード位置へ戻る）
+  const handleCancel = (e: React.MouseEvent) => {
+    e.preventDefault();
+    router.push(`/notes/${card.userId}?highlight=${card.id}`);
+  };
 
   return (
     <div className="flex min-h-screen flex-col bg-[#FAF7F2]">
@@ -164,12 +173,13 @@ export default function EditCardForm({ card }: EditCardFormProps) {
 
           {/* ボタンエリア */}
           <div className="flex gap-3 pt-4">
-            <Link
-              href="/"
-              className="flex-1 py-3 rounded-full border border-[#7A2E3B] text-[#7A2E3B] font-medium text-center hover:bg-[#7A2E3B]/5 transition-colors block"
+            <button
+              type="button"
+              onClick={handleCancel}
+              className="flex-1 py-3 rounded-full border border-[#7A2E3B] text-[#7A2E3B] font-medium text-center hover:bg-[#7A2E3B]/5 transition-colors"
             >
               キャンセル
-            </Link>
+            </button>
             <button
               type="submit"
               className="flex-1 py-3 rounded-full bg-[#7A2E3B] text-white font-medium text-center shadow-md hover:bg-[#63242f] transition-colors"
