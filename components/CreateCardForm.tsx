@@ -1,13 +1,74 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import Link from "next/link";
 import Navigation from "@/components/Navigation";
-import { createCard } from "@/app/create/actions"; // 新規作成用のServer Action
+import { createCard } from "@/app/create/actions";
+
+type BookItem = {
+  id: string;
+  title: string;
+  author: string;
+  thumbnail: string | null;
+};
 
 export default function CreateCardForm() {
   const [quoteLength, setQuoteLength] = useState(0);
+
+  // フォームの入力値を管理するステート
+  const [bookTitle, setBookTitle] = useState("");
+  const [authorName, setAuthorName] = useState("");
+
+  // 検索関連のステート
+  const [searchResults, setSearchResults] = useState<BookItem[]>([]);
+  const [showResults, setShowResults] = useState(false);
+
+  // タイトルが入力されたら自動でAPIを叩く
+  useEffect(() => {
+    if (!bookTitle || bookTitle.trim() === "") {
+      return;
+    }
+
+    const timer = setTimeout(async () => {
+      try {
+        const res = await fetch(
+          `/api/books?q=${encodeURIComponent(bookTitle)}`,
+        );
+        const results = await res.json();
+
+        if (Array.isArray(results)) {
+          setSearchResults(results);
+          setShowResults(true);
+        } else {
+          setSearchResults([]);
+          setShowResults(false);
+        }
+      } catch (error) {
+        console.error("検索エラー:", error);
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [bookTitle]);
+
+  // タイトル入力欄の onChange（ここで空文字のときのクリアも安全に行う）
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setBookTitle(value);
+
+    if (!value || value.trim() === "") {
+      setSearchResults([]);
+      setShowResults(false);
+    }
+  };
+
+  // 候補の選択時
+  const handleSelectBook = (book: BookItem) => {
+    setBookTitle(book.title);
+    setAuthorName(book.author !== "著者不明" ? book.author : "");
+    setShowResults(false); // リストを閉じる
+  };
 
   return (
     <div className="flex min-h-screen flex-col bg-[#FAF7F2]">
@@ -40,8 +101,8 @@ export default function CreateCardForm() {
             </div>
           </div>
 
-          {/* 本のタイトル */}
-          <div className="space-y-1.5">
+          {/* 本のタイトル（検索連動） */}
+          <div className="space-y-1.5 relative">
             <label className="text-sm font-medium text-gray-700">
               本のタイトル
             </label>
@@ -49,11 +110,50 @@ export default function CreateCardForm() {
               <input
                 type="text"
                 name="bookTitle"
+                value={bookTitle}
+                onChange={handleTitleChange}
                 required
-                placeholder="本のタイトルを入力"
+                placeholder="本のタイトルを入力（検索）"
                 className="w-full border-none bg-transparent text-sm text-gray-700 focus:outline-none"
+                autoComplete="off"
               />
             </div>
+
+            {/* 検索候補ドロップダウン */}
+            {showResults && searchResults.length > 0 && (
+              <div className="absolute left-0 right-0 z-20 mt-1 max-h-60 overflow-y-auto bg-white rounded-2xl shadow-lg border border-stone-100 p-2 space-y-1">
+                <div className="px-3 py-1 text-[10px] text-stone-400 font-medium">
+                  候補から選択してください
+                </div>
+                {searchResults.map((book) => (
+                  <div
+                    key={book.id}
+                    onClick={() => handleSelectBook(book)}
+                    className="flex items-center gap-3 p-2 rounded-xl hover:bg-stone-50 cursor-pointer transition-colors"
+                  >
+                    {book.thumbnail ? (
+                      <img
+                        src={book.thumbnail}
+                        alt={book.title}
+                        className="w-8 h-12 object-cover rounded shadow-xs"
+                      />
+                    ) : (
+                      <div className="w-8 h-12 bg-stone-200 rounded flex items-center justify-center text-[10px] text-stone-400">
+                        No img
+                      </div>
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-bold text-stone-800 truncate">
+                        {book.title}
+                      </p>
+                      <p className="text-[11px] text-stone-500 truncate">
+                        {book.author}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* 著者名 */}
@@ -65,6 +165,8 @@ export default function CreateCardForm() {
               <input
                 type="text"
                 name="authorName"
+                value={authorName}
+                onChange={(e) => setAuthorName(e.target.value)}
                 placeholder="著者名を入力"
                 className="w-full border-none bg-transparent text-sm text-gray-700 focus:outline-none"
               />
@@ -90,7 +192,7 @@ export default function CreateCardForm() {
             </div>
           </div>
 
-          {/* ボタン */}
+          {/* キャンセル、保存ボタン */}
           <div className="flex gap-3 pt-4">
             <Link
               href="/"
