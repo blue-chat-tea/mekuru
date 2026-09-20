@@ -73,11 +73,6 @@ export default function ExploreClientContent({
             : "animate-slide-in-left"
         }`}
       >
-        {/* 上部：公開カードなのでラベル等は不要であれば省略、またはスペース調整 */}
-        <div className="flex justify-end items-center text-xs text-[#A3978E]">
-          <span>めぐる言葉</span>
-        </div>
-
         {/* 言葉 */}
         <div className="flex-1 flex items-center">
           <p className="font-serif text-lg leading-relaxed text-gray-800 whitespace-pre-wrap line-clamp-6">

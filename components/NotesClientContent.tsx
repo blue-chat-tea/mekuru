@@ -10,6 +10,7 @@ type CardItem = {
   quote: string;
   bookTitle: string;
   authorName: string | null;
+  isbn: string | null; // ★ isbnを追加
   isPublic: boolean;
   createdAt: Date;
 };
@@ -28,15 +29,15 @@ export default function NotesClientContent({
   const [cards, setCards] = useState<CardItem[]>(initialCards);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  // ★ 1. モーダルの開閉状態を管理するステートを追加
+  // モーダルの開閉状態を管理するステート
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // ★ 追加：アニメーションの方向（'left' または 'right'）を保持
+  // アニメーションの方向（'left' または 'right'）を保持
   const [slideDirection, setSlideDirection] = useState<"left" | "right">(
     "right",
   );
 
-  // ★ 2. URLの ?highlight=... を取得し、対応するカードのインデックスを初期値にする
+  // URLの ?highlight=... を取得し、対応するカードのインデックスを初期値にする
   const searchParams = useSearchParams();
   const highlightId = searchParams.get("highlight");
 
@@ -100,6 +101,11 @@ export default function NotesClientContent({
     }
   };
 
+  // ★ 本のリンク生成（ISBNがあればAmazonのASIN/ISBNページ、なければ検索リンク）
+  const bookLink = currentCard.isbn
+    ? `https://www.amazon.co.jp/dp/${currentCard.isbn}`
+    : `https://www.amazon.co.jp/s?k=${encodeURIComponent(currentCard.bookTitle)}`;
+
   return (
     <div className="w-full max-w-sm flex flex-col items-center space-y-4">
       {/* カード本体：keyにsafeIndexを指定することで、切り替わるたびにアニメーションが発火します */}
@@ -159,12 +165,17 @@ export default function NotesClientContent({
           </p>
         </div>
 
-        {/* 本のタイトルと著者（右寄せ・左端揃え） */}
+        {/* 本のタイトルと著者（右寄せ・リンク付きに変更） */}
         <div className="flex flex-col items-end pb-2">
           <div className="text-right">
-            <h2 className="font-serif text-xs font-bold text-[#7A2E3B]">
+            <Link
+              href={bookLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-serif text-xs text-[#7A2E3B] font-bold hover:underline"
+            >
               {currentCard.bookTitle}
-            </h2>
+            </Link>
             <p className="font-serif text-xs text-gray-500 mt-0.5">
               {currentCard.authorName || "著者不明"}
             </p>
@@ -182,7 +193,7 @@ export default function NotesClientContent({
           <span>{new Date(currentCard.createdAt).toLocaleDateString()}</span>
         </div>
 
-        {/* ★ 本人（isOwner）のときだけ編集・削除ボタンを表示する */}
+        {/* 本人（isOwner）のときだけ編集・削除ボタンを表示する */}
         {isOwner && (
           <div className="flex justify-end gap-4 pt-2 text-xs">
             <Link
@@ -249,7 +260,7 @@ export default function NotesClientContent({
         </button>
       </div>
 
-      {/* ★ 本人のときだけ削除確認モーダルもレンダリングする（またはisOwnerでガード） */}
+      {/* 削除確認モーダル */}
       {isOwner && isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
           <div className="w-full max-w-sm rounded-3xl bg-white p-6 shadow-xl border border-stone-100 text-center space-y-4">
