@@ -1,16 +1,16 @@
+// ログイン画面
 "use client";
 
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { BookOpen } from "lucide-react"; // bookアイコンをインポート
+import { BookOpen } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  // 新規登録と同じエラー管理構造に変更
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [serverError, setServerError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -40,7 +40,7 @@ export default function LoginPage() {
       });
 
       if (res?.error) {
-        // 認証失敗時、各入力欄の下、または全体エラー枠に表示
+        // 認証失敗時、各入力欄の下に表示
         setServerError("メールアドレスまたはパスワードが正しくありません。");
       } else {
         router.push("/");
@@ -88,7 +88,7 @@ export default function LoginPage() {
               className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:border-[#842D38] focus:outline-none focus:ring-1 focus:ring-[#842D38]"
               placeholder="example@example.com"
             />
-            {/* 新規登録と同じ個別の赤文字エラー */}
+            {/* メールアドレスのエラーメッセージ */}
             {errors.email && (
               <p className="mt-1 text-sm text-red-600">{errors.email}</p>
             )}

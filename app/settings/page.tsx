@@ -1,9 +1,11 @@
+// アカウント設定画面
 "use client";
 
-import { useState } from "react"; // ★ useEffect
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
+import { AlertTriangle } from "lucide-react";
 
 export default function SettingsPage() {
   const { data: session, update } = useSession();
@@ -83,7 +85,7 @@ export default function SettingsPage() {
           </div>
 
           {!isDeleting ? (
-            /* 通常のアカウント設定表示 (スクリーンショット 3) */
+            /* アカウント設定表示 */
             <>
               <h1 className="mb-6 text-center text-xl font-bold text-gray-800">
                 アカウント設定
@@ -164,10 +166,10 @@ export default function SettingsPage() {
               </div>
             </>
           ) : (
-            /* 退会確認表示 (スクリーンショット 4) */
+            /* 退会確認表示 */
             <div className="text-center space-y-6">
               <div className="flex justify-center items-center space-x-2 text-xl font-bold text-gray-800">
-                <span className="text-2xl">⚠️</span>
+                <AlertTriangle className="h-6 w-6 text-amber-500" />
                 <h2>退会しますか？</h2>
               </div>
 

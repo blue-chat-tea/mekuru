@@ -19,7 +19,16 @@ export default auth((req) => {
   // Auth.jsのconfigに沿って自動リダイレクトされるが、明示的にレスポンスを生成する
   if (isProtectedRoute && !isLoggedIn) {
     const loginUrl = new URL("/login", nextUrl.origin);
-    return NextResponse.redirect(loginUrl);
+    const response = NextResponse.redirect(loginUrl);
+
+    // リダイレクトのレスポンスにもキャッシュ無効化を付与
+    response.headers.set(
+      "Cache-Control",
+      "no-store, no-cache, must-revalidate, proxy-revalidate",
+    );
+    response.headers.set("Pragma", "no-cache");
+    response.headers.set("Expires", "0");
+    return response;
   }
 
   const response = NextResponse.next();

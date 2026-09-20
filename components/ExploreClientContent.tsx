@@ -26,7 +26,7 @@ export default function ExploreClientContent({
 }: ExploreClientContentProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // ★ 追加：アニメーションの方向（'left' または 'right'）
+  // アニメーションの方向（'left' または 'right'）
   const [slideDirection, setSlideDirection] = useState<"left" | "right">(
     "right",
   );

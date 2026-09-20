@@ -1,3 +1,4 @@
+/* アプリケーション全体の見た目*/
 @import "tailwindcss";
 
 :root {
@@ -25,6 +26,7 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/*カードの動きのアニメーション指定 */
 @keyframes slideInRight {
   from {
     opacity: 0;

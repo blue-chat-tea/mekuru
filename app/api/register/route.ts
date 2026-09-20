@@ -1,3 +1,4 @@
+// 新規登録処理
 import { NextResponse } from "next/server"; // サーバーからブラウザへの返信
 import { prisma } from "@/lib/prisma"; // データベースの呼び出し
 import { hashPassword } from "@/lib/password"; // パスワードハッシュ化関数

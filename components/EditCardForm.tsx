@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import Navigation from "@/components/Navigation";
-import { updateCard } from "@/app/update/[id]/actions"; // 更新用のServer Action
+import { updateCard } from "@/app/_actions/cardActions";
 
 type EditCardFormProps = {
   card: {

@@ -1,9 +1,10 @@
+// 新規登録ページ画面
 "use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { BookOpen } from "lucide-react"; // bookアイコンをインポート
+import { BookOpen } from "lucide-react";
 
 export default function RegisterPage() {
   // 1.Stateの定義と初期化
@@ -12,7 +13,6 @@ export default function RegisterPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
   // 表示・状態管理
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   //エラーメッセージ
@@ -63,7 +63,7 @@ export default function RegisterPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#FAF6F0] px-4">
       <div className="w-full max-w-md space-y-6 rounded-lg bg-white p-8 shadow-md">
-        {/* ヘッダーエリア（ロゴと見出しを統合し、余白を調整） */}
+        {/* ヘッダーエリア */}
         <div className="text-center">
           <div className="flex items-center justify-center gap-2">
             <BookOpen className="h-7 w-7 text-[#842D38]" />
@@ -82,7 +82,7 @@ export default function RegisterPage() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* お名前 */}
+          {/* ユーザー名 */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
               ユーザー名

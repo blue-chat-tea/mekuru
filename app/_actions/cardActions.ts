@@ -1,3 +1,5 @@
+// カードの登録・編集・削除処理
+// カード情報の取得
 "use server";
 
 import { auth } from "@/auth";
@@ -5,7 +7,7 @@ import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-// カード作成
+// カードの新規作成
 export async function createCard(formData: FormData) {
   // 1. ログイン中のセッションからユーザー情報を取得
   const session = await auth();
@@ -43,6 +45,7 @@ export async function createCard(formData: FormData) {
   redirect(`/notes/${session.user.id}`);
 }
 
+// カードの更新
 export async function updateCard(cardId: string, formData: FormData) {
   const quote = formData.get("quote") as string;
   const bookTitle = formData.get("bookTitle") as string;
@@ -54,7 +57,7 @@ export async function updateCard(cardId: string, formData: FormData) {
   }
 
   // データベースのカードを更新
-  await prisma.card.update({
+  const updatedCard = await prisma.card.update({
     where: { id: cardId },
     data: {
       quote,
@@ -64,6 +67,56 @@ export async function updateCard(cardId: string, formData: FormData) {
     },
   });
 
-  // 更新が終わったらホームやマイノートなどにリダイレクト
-  redirect("/");
+  // 更新後、そのカードがハイライトされるようにクエリをつけてマイノートへリダイレクト
+  redirect(`/notes/${updatedCard.userId}?highlight=${updatedCard.id}`);
+}
+
+// カード削除
+export async function deleteCard(cardId: string) {
+  const session = await auth();
+  if (!session?.user?.id) {
+    throw new Error("認証されていないユーザーです。");
+  }
+
+  // 削除対象のカードが自分のものであるか確認
+  const card = await prisma.card.findUnique({
+    where: { id: cardId },
+  });
+
+  if (!card || card.userId !== session.user.id) {
+    throw new Error("削除権限がないか、カードが存在しません。");
+  }
+
+  // データベースから削除
+  await prisma.card.delete({
+    where: { id: cardId },
+  });
+
+  revalidatePath(`/notes/${session.user.id}`);
+}
+
+// カードの情報を取得
+export async function getPublicCards() {
+  try {
+    const cards = await prisma.card.findMany({
+      where: {
+        isPublic: true, // 公開カード
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc", // 新しい順
+      },
+    });
+    return cards;
+  } catch (error) {
+    console.error("公開カードの取得に失敗しました:", error);
+    return [];
+  }
 }

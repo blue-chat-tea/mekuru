@@ -1,6 +1,7 @@
+// 言葉の編集画面
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import EditCardForm from "@/components/EditCardForm"; // フォーム部分を切り出したクライアントコンポーネント
+import EditCardForm from "@/components/EditCardForm";
 
 type PageProps = {
   params: Promise<{ id: string }>;

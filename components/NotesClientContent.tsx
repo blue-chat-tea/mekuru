@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { deleteCard } from "@/app/delete/actions"; // 削除アクション
+import { deleteCard } from "@/app/_actions/cardActions";
 import Link from "next/link";
 
 type CardItem = {
@@ -108,7 +108,7 @@ export default function NotesClientContent({
 
   return (
     <div className="w-full max-w-sm flex flex-col items-center space-y-4">
-      {/* カード本体：keyにsafeIndexを指定することで、切り替わるたびにアニメーションが発火します */}
+      {/* カード本体 */}
       <div
         key={safeIndex}
         className={`w-full h-[400px] flex flex-col justify-between bg-white rounded-3xl p-6 shadow-sm relative transition-all duration-500 ease-out transform ${
@@ -121,7 +121,7 @@ export default function NotesClientContent({
         <div className="flex justify-end items-center gap-1.5 text-xs text-[#A3978E]">
           {currentCard.isPublic ? (
             <>
-              {/* 地球（公開）アイコン */}
+              {/* 公開アイコン */}
               <svg
                 className="w-4 h-4 text-[#A3978E]"
                 fill="none"
@@ -139,7 +139,7 @@ export default function NotesClientContent({
             </>
           ) : (
             <>
-              {/* 鍵（非公開）アイコン */}
+              {/* 非公開アイコン */}
               <svg
                 className="w-4 h-4 text-[#A3978E]"
                 fill="none"
@@ -165,7 +165,7 @@ export default function NotesClientContent({
           </p>
         </div>
 
-        {/* 本のタイトルと著者（右寄せ・リンク付きに変更） */}
+        {/* 本のタイトルと著者 */}
         <div className="flex flex-col items-end pb-2">
           <div className="text-right">
             <Link
