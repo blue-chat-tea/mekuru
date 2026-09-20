@@ -1,3 +1,4 @@
+// メインページ(めぐる言葉)画面
 export const dynamic = "force-dynamic";
 
 import { prisma } from "@/lib/prisma";
@@ -7,7 +8,7 @@ import ExploreClientContent from "@/components/ExploreClientContent"; // メイ�
 <Navigation activeTab="home" />;
 
 export default async function ExplorePage() {
-  // 1. 全ユーザーの公開カードを新しい順（createdAt desc）で取得し、ユーザー情報も結合する
+  // 全ユーザーの公開カードを新しい順で取得し表示する
   const cards = await prisma.card.findMany({
     where: {
       isPublic: true, // 公開設定のもののみ
@@ -38,7 +39,7 @@ export default async function ExplorePage() {
         <ExploreClientContent cards={cards} />
       </main>
 
-      {/* 下部ナビゲーションバー（アクティブタブを切り替え） */}
+      {/* 下部ナビゲーションバー */}
       <Navigation activeTab="home" />
     </div>
   );

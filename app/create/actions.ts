@@ -1,3 +1,4 @@
+// 言葉の登録・編集処理
 "use server";
 
 import { auth } from "@/auth";

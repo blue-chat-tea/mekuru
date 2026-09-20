@@ -1,3 +1,4 @@
+//カードの削除処理
 "use server";
 
 import { auth } from "@/auth";

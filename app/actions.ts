@@ -1,12 +1,14 @@
+// データベースからアプリ内の公開設定になっているカードを新しい順に取得するアクション
+// どのユーザーが投稿したのか(idとname)も取得する
 "use server";
 
-import { prisma } from "@/lib/prisma"; // プロジェクトで使っているPrismaクライアントのパスに合わせて調整してください
+import { prisma } from "@/lib/prisma";
 
 export async function getPublicCards() {
   try {
     const cards = await prisma.card.findMany({
       where: {
-        isPublic: true, // 公開されているもの
+        isPublic: true, // 公開カード
       },
       include: {
         user: {

@@ -1,3 +1,4 @@
+// ユーザーのノートページ
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
@@ -10,13 +11,14 @@ type PageProps = {
 };
 
 export default async function UserNotesPage({ params }: PageProps) {
+  //現在表示しているブラウザのユーザーID
   const { id } = await params;
 
-  // 1. セッション（ログイン中のユーザー）を取得
+  // セッション（ログイン中のユーザー）を取得
   const session = await auth();
   const currentUserId = session?.user?.id;
 
-  // 2. URLのIDに対応するユーザーと、そのカードを登録が新しい順（createdAt desc）で取得
+  // URLのIDに対応するユーザーと、そのカードを登録が新しい順（createdAt desc）で取得
   const profileUser = await prisma.user.findUnique({
     where: { id },
     include: {

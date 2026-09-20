@@ -1,3 +1,4 @@
+// アカウント設定更新処理
 import { NextResponse } from "next/server";
 import { auth } from "@/auth"; // Auth.js のセッション取得
 import { prisma } from "@/lib/prisma";
@@ -8,7 +9,10 @@ export async function PATCH(req: Request) {
   try {
     const session = await auth();
     if (!session?.user?.id) {
-      return NextResponse.json({ error: "未認証のリクエストです" }, { status: 401 });
+      return NextResponse.json(
+        { error: "未認証のリクエストです" },
+        { status: 401 },
+      );
     }
 
     const { name, password } = await req.json();
@@ -25,10 +29,16 @@ export async function PATCH(req: Request) {
       select: { id: true, name: true, email: true },
     });
 
-    return NextResponse.json({ message: "更新が完了しました", user: updatedUser });
+    return NextResponse.json({
+      message: "更新が完了しました",
+      user: updatedUser,
+    });
   } catch (error) {
     console.error("Update User Error:", error);
-    return NextResponse.json({ error: "サーバーエラーが発生しました" }, { status: 500 });
+    return NextResponse.json(
+      { error: "サーバーエラーが発生しました" },
+      { status: 500 },
+    );
   }
 }
 
@@ -37,7 +47,10 @@ export async function DELETE() {
   try {
     const session = await auth();
     if (!session?.user?.id) {
-      return NextResponse.json({ error: "未認証のリクエストです" }, { status: 401 });
+      return NextResponse.json(
+        { error: "未認証のリクエストです" },
+        { status: 401 },
+      );
     }
 
     // Prisma Schema で onDelete: Cascade が入っていれば紐づくデータも削除されます
@@ -48,6 +61,9 @@ export async function DELETE() {
     return NextResponse.json({ message: "アカウントを削除しました" });
   } catch (error) {
     console.error("Delete User Error:", error);
-    return NextResponse.json({ error: "サーバーエラーが発生しました" }, { status: 500 });
+    return NextResponse.json(
+      { error: "サーバーエラーが発生しました" },
+      { status: 500 },
+    );
   }
 }
