@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import Link from "next/link";
 import Navigation from "@/components/Navigation";
-import { createCard } from "@/app/create/actions";
+import { createCard } from "@/app/_actions/cardActions";
 
 type BookItem = {
   id: string;

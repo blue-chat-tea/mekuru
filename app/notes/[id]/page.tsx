@@ -51,7 +51,7 @@ export default async function UserNotesPage({ params }: PageProps) {
         <NotesClientContent
           cards={profileUser.cards}
           userName={profileUser.name}
-          isOwner={isOwner} // ★ ここを追加
+          isOwner={isOwner}
         />
       </main>
 
