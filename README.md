@@ -28,9 +28,12 @@
    npm install
    ```
 
-3.環境変数（.env）を設定します（DATABASE_URL や AUTH_SECRET の記述が必要です）。
+3.環境変数（.env）を設定します（DATABASE_URL や AUTH_SECRET の記述が必要）。
 
 4.開発サーバーを起動します。
 
-Bash
-npm run dev 5.ブラウザで http://localhost:3000 を開いて確認します。
+```bash
+npm run dev
+```
+
+5. ブラウザで [http://localhost:3000/login](http://localhost:3000/login) を開き、ログイン画面から動作を確認します。
