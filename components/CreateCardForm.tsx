@@ -132,16 +132,19 @@ export default function CreateCardForm() {
                     className="flex items-center gap-3 p-2 rounded-xl hover:bg-stone-50 cursor-pointer transition-colors"
                   >
                     {book.thumbnail ? (
+                      // eslint-disable-next-line @next/next/no-img-element
                       <img
                         src={book.thumbnail}
                         alt={book.title}
                         className="w-8 h-12 object-cover rounded shadow-xs"
                       />
                     ) : (
-                      <div className="w-8 h-12 bg-stone-200 rounded flex items-center justify-center text-[10px] text-stone-400">
+                      // 画像がない場合のプレースホルダー（必要に応じて枠やアイコン、あるいは空のボックスにするなど）
+                      <div className="w-8 h-12 bg-stone-100 rounded flex items-center justify-center text-[10px] text-stone-400">
                         No img
                       </div>
                     )}
+
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-bold text-stone-800 truncate">
                         {book.title}

@@ -22,22 +22,30 @@ export async function GET(request: Request) {
     }
 
     // Open Libraryのレスポンス構造を、アプリで使いやすい形に変換
-    const books = data.docs.map((item: any) => {
+    const books = data.docs.map((item: Record<string, unknown>) => {
       // 著者名の配列を安全に結合する処理
       let author = "著者不明";
-      if (Array.isArray(item.author_name) && item.author_name.length > 0) {
-        author = item.author_name.join(", ");
+      const authorName = item.author_name;
+      if (Array.isArray(authorName) && authorName.length > 0) {
+        author = authorName.map(String).join(", ");
       }
+
+      const coverI = item.cover_i;
+      const title = typeof item.title === "string" ? item.title : "";
+      const key = typeof item.key === "string" ? item.key : undefined;
 
       return {
         id:
-          item.key ||
-          (item.cover_i ? item.cover_i.toString() : Math.random().toString()),
-        title: item.title || "",
+          key ||
+          (typeof coverI === "number"
+            ? coverI.toString()
+            : Math.random().toString()),
+        title: title,
         author: author,
-        thumbnail: item.cover_i
-          ? `https://covers.openlibrary.org/b/id/${item.cover_i}-M.jpg`
-          : null,
+        thumbnail:
+          typeof coverI === "number"
+            ? `https://covers.openlibrary.org/b/id/${coverI}-M.jpg`
+            : null,
       };
     });
 
