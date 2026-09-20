@@ -1,36 +1,36 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# アプリ名:めくる
 
-## Getting Started
+このアプリは、心に残った言葉や本を記録・管理するためのWebアプリケーションです。
 
-First, run the development server:
+## 主な機能
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **言葉の記録**: 心に残った言葉や読んだ本の情報をカード形式で登録・編集・削除
+- **書籍検索**: Open Library APIを利用した書籍の検索とタイトルの自動取得
+- **言葉の閲覧**: 自分自身や他のユーザーの記録を閲覧する
+- **タイトルからECサイトへ誘導**: 本のタイトルをクリックするとECサイト(Amazon)に誘導する
+- **ユーザー認証**: ログイン・新規登録機能
+- **ユーザー情報の更新**: ユーザー名とパスワードの更新、削除
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 使用技術
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Frontend / Backend**: Next.js (App Router), React, Tailwind CSS
+- **Database / ORM**: PostgreSQL, Prisma
+- **Authentication**: Auth.js (NextAuth.js)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 起動方法（Getting Started）
 
-## Learn More
+ローカル環境で実行する場合の手順です。
 
-To learn more about Next.js, take a look at the following resources:
+1. リポジトリをクローンまたはダウンロードします。
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+2. 依存パッケージをインストールします。
+   ```bash
+   npm install
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+3.環境変数（.env）を設定します（DATABASE_URL や AUTH_SECRET の記述が必要です）。
 
-## Deploy on Vercel
+4.開発サーバーを起動します。
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Bash
+npm run dev 5.ブラウザで http://localhost:3000 を開いて確認します。
