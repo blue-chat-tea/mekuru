@@ -9,7 +9,6 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-# ★ここでPrisma Clientを生成するコマンドを追加
 RUN npx prisma generate
 RUN npm run build
 
@@ -26,6 +25,10 @@ COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
+COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
+COPY --from=builder --chown=nextjs:nodejs /app/package.json ./
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
+
 USER nextjs
 
 EXPOSE 3000
@@ -34,9 +37,3 @@ ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
 CMD ["node", "server.js"]
-# entrypoint.sh をコピーして実行権限を付与
-COPY entrypoint.sh ./
-RUN chmod +x entrypoint.sh
-
-# コンテナ起動時に entrypoint.sh を実行する
-CMD ["./entrypoint.sh"]
