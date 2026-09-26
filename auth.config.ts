@@ -2,6 +2,7 @@ import type { NextAuthConfig } from "next-auth";
 
 export const authConfig = {
   secret: process.env.AUTH_SECRET,
+  trustHost: true, // 追加：プロキシ環境やカスタムドメインでのホスト検証エラーを回避
   session: {
     strategy: "jwt",
   },
