@@ -4,9 +4,7 @@
 
 ## デプロイURL
 
-- ## デプロイURL
-
-- セキュリティおよびインフラ保護のため、本番サイトのURLは提出フォームにて個別にお知らせしております。
+セキュリティおよびインフラ保護のため、本番サイトのURLは提出フォームにて個別にお知らせしております。
 
 ## 主な機能
 
@@ -39,6 +37,7 @@
 ## アーキテクチャ構成
 
 Route 53 -> CloudFront -> ALB -> パブリックサブネット (ECS/Next.js) -> プライベートサブネット (RDS/PostgreSQL) の単一AZ構成で構築しています。
+![アーキテクチャ構成](./images/architecture.png)
 
 ## 起動方法
 
@@ -55,7 +54,19 @@ Route 53 -> CloudFront -> ALB -> パブリックサブネット (ECS/Next.js) ->
    ```
 3. **環境変数（.env）を設定する**
 
-   プロジェクトのルートに .env ファイルを作成し、必要な環境変数（DATABASE_URL や AUTH_SECRET など）を設定します。
+   プロジェクトルートにある `.env.example` ファイルをコピーして、`.env` ファイルを作成します。
+
+   ```bash
+   cp .env.example .env
+   ```
+
+   作成した .env ファイルを開き、それぞれの環境変数を設定します。
+   - DATABASE_URL: ご自身のローカルPostgreSQLの接続情報に書き換える。
+
+   - AUTH_SECRET: 以下のコマンドを実行してランダムな文字列を生成し、設定する。
+     ```bash
+     echo "AUTH_SECRET=\"$(openssl rand -base64 32)\"" >> .env
+     ```
 
 4. **開発サーバーを起動する**
    ```bash
